@@ -125,6 +125,28 @@
     </div>
 
     <script>
+        // ========== SOUND EFFECTS ==========
+        const sounds = {
+            bgMusic: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-show-suspense-waiting-668.mp3'),
+            flap: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-bird-whistling-1480.mp3'),
+            score: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3'),
+            hit: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-explosion-2759.mp3')
+        };
+
+        // Fungsi untuk memainkan sound dengan autoplay
+        function playSound(sound) {
+            sound.currentTime = 0; // Reset sound ke awal
+            sound.play().catch(e => console.log("Autoplay prevented:", e));
+        }
+
+        // Fungsi untuk menghentikan semua sound
+        function stopAllSounds() {
+            for (const key in sounds) {
+                sounds[key].pause();
+                sounds[key].currentTime = 0;
+            }
+        }
+
         // Game variables
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
@@ -182,12 +204,14 @@
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' && gameRunning) {
                 bird.velocity = bird.lift;
+                playSound(sounds.flap);
             }
         });
         
         canvas.addEventListener('click', () => {
             if (gameRunning) {
                 bird.velocity = bird.lift;
+                playSound(sounds.flap);
             }
         });
         
@@ -209,6 +233,10 @@
             menuScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
             scoreDisplay.style.display = 'block';
+            
+            // Start background music
+            sounds.bgMusic.loop = true;
+            playSound(sounds.bgMusic);
             
             // Start game loop
             requestAnimationFrame(gameLoop);
@@ -280,6 +308,7 @@
                     pipes[i].passed = true;
                     score++;
                     scoreDisplay.textContent = score;
+                    playSound(sounds.score);
                 }
                 
                 // Remove pipes that are off screen
@@ -456,6 +485,10 @@
                 highScoreDisplay.textContent = `High Score: ${highScore}`;
             }
             
+            // Stop sounds and play hit sound
+            stopAllSounds();
+            playSound(sounds.hit);
+            
             // Show game over screen
             finalScoreDisplay.textContent = `Skor: ${score}`;
             gameOverScreen.style.display = 'flex';
@@ -463,4 +496,4 @@
         }
     </script>
 </body>
-  </html>
+    </html>
